@@ -16,7 +16,6 @@ import com.yongchun.library.R;
 
 import java.io.File;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by dee on 15/11/25.
@@ -37,7 +36,6 @@ public class ImagePreviewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_image_preview, container, false);
         final ImageView imageView = (ImageView) contentView.findViewById(R.id.preview_image);
-        final PhotoViewAttacher mAttacher = new PhotoViewAttacher(imageView);
         Glide.with(container.getContext())
                 .load(new File(getArguments().getString(PATH)))
                 .asBitmap()
@@ -45,16 +43,8 @@ public class ImagePreviewFragment extends Fragment {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         imageView.setImageBitmap(resource);
-                        mAttacher.update();
                     }
                 });
-        mAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
-            @Override
-            public void onViewTap(View view, float x, float y) {
-                ImagePreviewActivity activity = (ImagePreviewActivity) getActivity();
-                activity.switchBarVisibility();
-            }
-        });
-        return contentView;
+        return imageView;
     }
 }
