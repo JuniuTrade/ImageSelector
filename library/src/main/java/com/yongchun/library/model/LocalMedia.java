@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class LocalMedia implements Serializable {
     private String path;
     private long duration;
+    //图片最后编辑时间
     private long lastUpdateAt;
 
 
@@ -40,7 +41,9 @@ public class LocalMedia implements Serializable {
     public long getDuration() {
         return duration;
     }
+
     public void setDuration(long duration) {
         this.duration = duration;
     }
+
 }

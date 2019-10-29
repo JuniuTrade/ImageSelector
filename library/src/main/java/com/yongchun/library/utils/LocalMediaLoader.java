@@ -72,7 +72,9 @@ public class LocalMediaLoader {
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
                 ArrayList<LocalMediaFolder> imageFolders = new ArrayList<LocalMediaFolder>();
+                //总图片文件夹
                 LocalMediaFolder allImageFolder = new LocalMediaFolder();
+                //总图片列表
                 List<LocalMedia> allImages = new ArrayList<LocalMedia>();
 
                 while (data != null && data.moveToNext()) {
@@ -97,7 +99,6 @@ public class LocalMediaLoader {
 
                     if (parentFile.list() == null)
                         continue;
-                    LocalMediaFolder localMediaFolder = getImageFolder(path, imageFolders);
 
                     File[] files = parentFile.listFiles(new FilenameFilter() {
                         @Override
@@ -109,20 +110,30 @@ public class LocalMediaLoader {
                             return false;
                         }
                     });
+                    //当前图片文件夹
+                    LocalMediaFolder localMediaFolder = getImageFolder(path, imageFolders);
+                    //当前图片列表
                     ArrayList<LocalMedia> images = new ArrayList<>();
                     for (int i = 0; i < files.length; i++) {
                         File f = files[i];
                         LocalMedia localMedia = new LocalMedia(f.getAbsolutePath());
+                        //设置图片最后编辑时间
+                        localMedia.setLastUpdateAt(f.lastModified());
+                        //保存图片到总图片列表
                         allImages.add(localMedia);
                         images.add(localMedia);
                     }
+                    //保存当前文件夹图片数据
                     if (images.size() > 0) {
+                        //排序当前文件夹图片
+                        sortImage(images);
                         localMediaFolder.setImages(images);
                         localMediaFolder.setImageNum(localMediaFolder.getImages().size());
                         imageFolders.add(localMediaFolder);
                     }
                 }
-
+                //排序所有图片
+                sortImage(allImages);
                 allImageFolder.setImages(allImages);
                 allImageFolder.setImageNum(allImageFolder.getImages().size());
                 allImageFolder.setFirstImagePath(allImages.get(0).getPath());
@@ -139,8 +150,40 @@ public class LocalMediaLoader {
         });
     }
 
+    /**
+     * 图片排序
+     * 按时间先后顺序，最新图片拍前面
+     */
+    private void sortImage(List<LocalMedia> mediaList) {
+        Collections.sort(mediaList, new Comparator<LocalMedia>() {
+            //second：需要比较的数据 first：被比较的数据
+            public int compare(LocalMedia second, LocalMedia first) {
+                //时间为0的数据排在末尾
+                if (second.getLastUpdateAt() == 0) {
+                    return 1;
+                }
+                //新图片排在前面
+                if (second.getLastUpdateAt() > first.getLastUpdateAt()) {
+                    return -1;
+                }
+                //旧图片排在后面
+                else if(second.getLastUpdateAt() < first.getLastUpdateAt()){
+                    return  1 ;
+                }
+                //图片时间一致通过，文件名称排序
+                else {
+                    return second.getPath().compareTo(first.getPath());
+                }
+            }
+        });
+    }
+
+    /**
+     * 文件夹按图片数量排序
+     *
+     * @param imageFolders
+     */
     private void sortFolder(List<LocalMediaFolder> imageFolders) {
-        // 文件夹按图片数量排序
         Collections.sort(imageFolders, new Comparator<LocalMediaFolder>() {
             @Override
             public int compare(LocalMediaFolder lhs, LocalMediaFolder rhs) {
