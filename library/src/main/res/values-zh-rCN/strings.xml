@@ -3,6 +3,7 @@
     <string name="all_image">所有图片</string>
     <string name="picture">图片</string>
     <string name="take_picture">拍摄照片</string>
+    <string name="take_video">录制视频</string>
     <string name="preview">预览</string>
     <string name="preview_num">预览(%1$s)</string>
     <string name="choose">选择</string>

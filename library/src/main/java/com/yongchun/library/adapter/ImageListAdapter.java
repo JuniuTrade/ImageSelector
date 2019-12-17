@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -36,12 +37,15 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private OnImageSelectChangedListener imageSelectChangedListener;
 
-    public ImageListAdapter(Context context, int maxSelectNum, int mode, boolean showCamera, boolean enablePreview) {
+    private int mediaType; //多媒体类型
+
+    public ImageListAdapter(Context context, int maxSelectNum, int mode, boolean showCamera, boolean enablePreview, int mediaType) {
         this.context = context;
         this.selectMode = mode;
         this.maxSelectNum = maxSelectNum;
         this.showCamera = showCamera;
         this.enablePreview = enablePreview;
+        this.mediaType = mediaType;
     }
 
     public void bindImages(List<LocalMedia> images) {
@@ -89,6 +93,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }
                 }
             });
+            headerHolder.tvCamera.setText(ImageSelectorActivity.TYPE_IMAGE == mediaType ? context.getString(R.string.take_picture) : context.getString(R.string.take_video));
         } else {
             final ViewHolder contentHolder = (ViewHolder) holder;
             final LocalMedia image = images.get(showCamera ? position - 1 : position);
@@ -185,10 +190,12 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         View headerView;
+        TextView tvCamera;
 
         public HeaderViewHolder(View itemView) {
             super(itemView);
             headerView = itemView;
+            tvCamera = (TextView) itemView.findViewById(R.id.camera);
         }
     }
 

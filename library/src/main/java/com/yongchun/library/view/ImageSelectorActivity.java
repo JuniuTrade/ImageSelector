@@ -31,7 +31,7 @@ import java.util.List;
  * Created by dee on 15/11/19.
  */
 public class ImageSelectorActivity extends AppCompatActivity {
-    public final static int REQUEST_CAMERA = 67;       //相机
+    private final static int REQUEST_CAMERA = 77;       //相机
     // load type
     public static final int TYPE_IMAGE = 66; //照片
     public static final int TYPE_VIDEO = 67; //视频
@@ -139,7 +139,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, ScreenUtils.dip2px(this, 2), false));
         recyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
 
-        imageAdapter = new ImageListAdapter(this, maxSelectNum, selectMode, showCamera, enablePreview);
+        imageAdapter = new ImageListAdapter(this, maxSelectNum, selectMode, showCamera, enablePreview, mediaType);
         recyclerView.setAdapter(imageAdapter);
 
     }
