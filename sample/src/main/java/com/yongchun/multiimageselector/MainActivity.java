@@ -3,12 +3,15 @@ package com.yongchun.multiimageselector;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.yongchun.library.utils.LocalMediaLoader;
 import com.yongchun.library.view.ImageSelectorActivity;
 
 import java.util.ArrayList;
@@ -25,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Button selectPicture;
 
-    private int maxSelectNum = 9;
+    private int maxSelectNum = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         registerListener();
 
     }
-    public void initView(){
+
+    public void initView() {
         minus = (ImageButton) findViewById(R.id.minus);
         plus = (ImageButton) findViewById(R.id.plus);
         selectNumText = (EditText) findViewById(R.id.select_num);
@@ -47,17 +52,18 @@ public class MainActivity extends AppCompatActivity {
 
         selectPicture = (Button) findViewById(R.id.select_picture);
     }
-    public void registerListener(){
+
+    public void registerListener() {
         selectMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.mode_single){
+                if (checkedId == R.id.mode_single) {
                     enableCrop.check(R.id.crop_enable);
                     findViewById(R.id.crop_enable).setEnabled(true);
 
                     enablePreview.check(R.id.preview_disable);
                     findViewById(R.id.preview_enable).setEnabled(false);
-                }else{
+                } else {
                     enableCrop.check(R.id.crop_disable);
                     findViewById(R.id.crop_enable).setEnabled(false);
 
@@ -69,35 +75,47 @@ public class MainActivity extends AppCompatActivity {
         minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                maxSelectNum --;
-                selectNumText.setText(maxSelectNum+"");
+                maxSelectNum--;
+                selectNumText.setText(maxSelectNum + "");
             }
         });
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                maxSelectNum ++;
-                selectNumText.setText(maxSelectNum+"");
+                maxSelectNum++;
+                selectNumText.setText(maxSelectNum + "");
             }
         });
         selectPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int mode = selectMode.getCheckedRadioButtonId()==R.id.mode_multiple?ImageSelectorActivity.MODE_MULTIPLE:ImageSelectorActivity.MODE_SINGLE;
-                boolean isShow = showCamera.getCheckedRadioButtonId()==R.id.camera_yes?true:false;
-                boolean isPreview = enablePreview.getCheckedRadioButtonId()==R.id.preview_enable?true:false;
-                boolean isCrop = enableCrop.getCheckedRadioButtonId()==R.id.crop_enable?true:false;
+                int mode = selectMode.getCheckedRadioButtonId() == R.id.mode_multiple ? ImageSelectorActivity.MODE_MULTIPLE : ImageSelectorActivity.MODE_SINGLE;
+                boolean isShow = showCamera.getCheckedRadioButtonId() == R.id.camera_yes ? true : false;
+                boolean isPreview = enablePreview.getCheckedRadioButtonId() == R.id.preview_enable ? true : false;
+                boolean isCrop = enableCrop.getCheckedRadioButtonId() == R.id.crop_enable ? true : false;
 
-                ImageSelectorActivity.start(MainActivity.this, maxSelectNum, mode, isShow,isPreview,isCrop);
+                ImageSelectorActivity.start(MainActivity.this, maxSelectNum, mode, isShow, isPreview, isCrop, ImageSelectorActivity.TYPE_VIDEO);
             }
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK && requestCode == ImageSelectorActivity.REQUEST_IMAGE){
+        Log.e("lyd", "requestCode = " + requestCode);
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == ImageSelectorActivity.TYPE_IMAGE) {
             ArrayList<String> images = (ArrayList<String>) data.getSerializableExtra(ImageSelectorActivity.REQUEST_OUTPUT);
-            startActivity(new Intent(this,SelectResultActivity.class).putExtra(SelectResultActivity.EXTRA_IMAGES,images));
+            startActivity(new Intent(this, SelectResultActivity.class).putExtra(SelectResultActivity.EXTRA_IMAGES, images));
+        } else if (requestCode == ImageSelectorActivity.TYPE_VIDEO) {
+            if (data == null) {
+                Toast.makeText(this, "拍视频", Toast.LENGTH_SHORT).show();
+            } else {
+                ArrayList<String> images = (ArrayList<String>) data.getSerializableExtra(ImageSelectorActivity.REQUEST_OUTPUT);
+                Log.e("lyd", " images " + images.get(0));
+                startActivity(new Intent(this, SelectResultActivity.class).putExtra(SelectResultActivity.EXTRA_IMAGES, images));
+            }
         }
     }
 }

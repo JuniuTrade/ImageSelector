@@ -19,13 +19,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.yongchun.library.view.ImageSelectorActivity.TYPE_IMAGE;
+import static com.yongchun.library.view.ImageSelectorActivity.TYPE_VIDEO;
+
 /**
  * Created by dee on 15/11/19.
  */
 public class LocalMediaLoader {
-    // load type
-    public static final int TYPE_IMAGE = 1;
-    public static final int TYPE_VIDEO = 2;
 
     private final static String[] IMAGE_PROJECTION = {
             MediaStore.Images.Media.DATA,
@@ -99,17 +99,37 @@ public class LocalMediaLoader {
 
                     if (parentFile.list() == null)
                         continue;
-
-                    File[] files = parentFile.listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String filename) {
-                            if (filename.endsWith(".jpg")
-                                    || filename.endsWith(".png")
-                                    || filename.endsWith(".jpeg"))
-                                return true;
-                            return false;
-                        }
-                    });
+                    File[] files;
+                    //图片
+                    if (type == TYPE_IMAGE) {
+                        files = parentFile.listFiles(new FilenameFilter() {
+                            @Override
+                            public boolean accept(File dir, String filename) {
+                                if (filename.endsWith(".jpg")
+                                        || filename.endsWith(".png")
+                                        || filename.endsWith(".jpeg"))
+                                    return true;
+                                return false;
+                            }
+                        });
+                    }
+                    //视频
+                    else {
+                        files = parentFile.listFiles(new FilenameFilter() {
+                            @Override
+                            public boolean accept(File dir, String filename) {
+                                if (filename.endsWith(".mp4")
+                                        || filename.endsWith(".rmvb")
+                                        || filename.endsWith(".rm")
+                                        || filename.endsWith(".avi")
+                                        || filename.endsWith(".wmv")
+                                        || filename.endsWith(".dmv")
+                                        || filename.endsWith(".flv"))
+                                    return true;
+                                return false;
+                            }
+                        });
+                    }
                     //当前图片文件夹
                     LocalMediaFolder localMediaFolder = getImageFolder(path, imageFolders);
                     //当前图片列表
@@ -167,8 +187,8 @@ public class LocalMediaLoader {
                     return -1;
                 }
                 //旧图片排在后面
-                else if(second.getLastUpdateAt() < first.getLastUpdateAt()){
-                    return  1 ;
+                else if (second.getLastUpdateAt() < first.getLastUpdateAt()) {
+                    return 1;
                 }
                 //图片时间一致通过，文件名称排序
                 else {
