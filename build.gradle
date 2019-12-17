@@ -17,8 +17,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-//        maven { url 'https://jitpack.io' }
-//        maven { url 'https://www.jitpack.io' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://www.jitpack.io' }
 //        maven { url 'http://new-alpha.juniusoft.com:9088/nexus/content/repositories/releases/'}
     }
 }
