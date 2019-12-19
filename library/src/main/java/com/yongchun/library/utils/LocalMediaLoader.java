@@ -156,7 +156,9 @@ public class LocalMediaLoader {
                 sortImage(allImages);
                 allImageFolder.setImages(allImages);
                 allImageFolder.setImageNum(allImageFolder.getImages().size());
-                allImageFolder.setFirstImagePath(allImages.get(0).getPath());
+                if (allImages != null && !allImages.isEmpty()) {
+                    allImageFolder.setFirstImagePath(allImages.get(0).getPath());
+                }
                 allImageFolder.setName(activity.getString(com.yongchun.library.R.string.all_image));
                 imageFolders.add(allImageFolder);
                 sortFolder(imageFolders);
