@@ -1,6 +1,7 @@
 package com.yongchun.library.utils;
 
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +14,7 @@ import com.yongchun.library.model.LocalMediaFolder;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -137,6 +139,7 @@ public class LocalMediaLoader {
                     for (int i = 0; i < files.length; i++) {
                         File f = files[i];
                         LocalMedia localMedia = new LocalMedia(f.getAbsolutePath());
+//                        Uri uri = Uri.fromFile(f);
                         //设置图片最后编辑时间
                         localMedia.setLastUpdateAt(f.lastModified());
                         //保存图片到总图片列表

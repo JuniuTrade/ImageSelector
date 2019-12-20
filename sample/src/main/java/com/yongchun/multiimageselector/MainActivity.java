@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
                 boolean isShow = showCamera.getCheckedRadioButtonId() == R.id.camera_yes ? true : false;
                 boolean isPreview = enablePreview.getCheckedRadioButtonId() == R.id.preview_enable ? true : false;
                 boolean isCrop = enableCrop.getCheckedRadioButtonId() == R.id.crop_enable ? true : false;
-
-                ImageSelectorActivity.start(MainActivity.this, maxSelectNum, mode, isShow, isPreview, isCrop, ImageSelectorActivity.TYPE_VIDEO);
+//                ImageSelectorActivity.skipImage(MainActivity.this, maxSelectNum, mode, isShow, isPreview, isCrop);
+                ImageSelectorActivity.skipVideo(MainActivity.this, maxSelectNum, mode, isShow, isPreview, 15);
             }
         });
     }

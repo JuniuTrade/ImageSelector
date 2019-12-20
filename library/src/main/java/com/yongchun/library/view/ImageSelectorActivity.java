@@ -46,6 +46,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
     public final static String EXTRA_ENABLE_CROP = "EnableCrop";
     public final static String EXTRA_MAX_SELECT_NUM = "MaxSelectNum";
     public final static String EXTRA_MEDIA_TYPE = "MediaType";     //显示图片视频类型
+    public final static String EXTRA_LIMIT_TIME = "LimitTime";     //视频长度限制
 
     public final static int MODE_MULTIPLE = 1;
     public final static int MODE_SINGLE = 2;
@@ -56,6 +57,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
     private boolean enablePreview = true;
     private boolean enableCrop = false;
     private int mediaType = TYPE_IMAGE; //显示图片视频类型
+    private float limitTime = 15; //视频长度限制
 
     private int spanCount = 3;
 
@@ -73,15 +75,43 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
     private String cameraPath;
 
-    public static void start(Activity activity, int maxSelectNum, int mode, boolean isShow, boolean enablePreview, boolean enableCrop, int mediaType) {
+    /**
+     * @param activity
+     * @param maxSelectNum  选择个数
+     * @param mode          单选/多选
+     * @param isShow        是否显示拍照/摄影
+     * @param enablePreview 是否显示预览
+     * @param enableCrop    视频长度限制
+     */
+    public static void skipImage(Activity activity, int maxSelectNum, int mode, boolean isShow, boolean enablePreview, boolean enableCrop) {
         Intent intent = new Intent(activity, ImageSelectorActivity.class);
         intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
         intent.putExtra(EXTRA_SELECT_MODE, mode);
         intent.putExtra(EXTRA_SHOW_CAMERA, isShow);
         intent.putExtra(EXTRA_ENABLE_PREVIEW, enablePreview);
         intent.putExtra(EXTRA_ENABLE_CROP, enableCrop);
-        intent.putExtra(EXTRA_MEDIA_TYPE, mediaType);
-        activity.startActivityForResult(intent, mediaType);
+        intent.putExtra(EXTRA_MEDIA_TYPE, TYPE_IMAGE);
+        activity.startActivityForResult(intent, TYPE_IMAGE);
+    }
+
+    /**
+     * @param activity
+     * @param maxSelectNum  选择个数
+     * @param mode          单选/多选
+     * @param isShow        是否显示拍照/摄影
+     * @param enablePreview 是否显示预览
+     * @param limitTime     视频长度限制
+     */
+    public static void skipVideo(Activity activity, int maxSelectNum, int mode, boolean isShow, boolean enablePreview, float limitTime) {
+        Intent intent = new Intent(activity, ImageSelectorActivity.class);
+        intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
+        intent.putExtra(EXTRA_SELECT_MODE, mode);
+        intent.putExtra(EXTRA_SHOW_CAMERA, isShow);
+        intent.putExtra(EXTRA_ENABLE_PREVIEW, enablePreview);
+        intent.putExtra(EXTRA_ENABLE_CROP, false);
+        intent.putExtra(EXTRA_MEDIA_TYPE, TYPE_VIDEO);
+        intent.putExtra(EXTRA_LIMIT_TIME, limitTime);
+        activity.startActivityForResult(intent, TYPE_VIDEO);
     }
 
     @Override
@@ -95,7 +125,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
         enablePreview = getIntent().getBooleanExtra(EXTRA_ENABLE_PREVIEW, true);
         enableCrop = getIntent().getBooleanExtra(EXTRA_ENABLE_CROP, false);
         mediaType = getIntent().getIntExtra(EXTRA_MEDIA_TYPE, TYPE_IMAGE);
-
+        limitTime = getIntent().getFloatExtra(EXTRA_LIMIT_TIME, 15);
 
         if (selectMode == MODE_MULTIPLE) {
             enableCrop = false;
@@ -139,7 +169,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, ScreenUtils.dip2px(this, 2), false));
         recyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
 
-        imageAdapter = new ImageListAdapter(this, maxSelectNum, selectMode, showCamera, enablePreview, mediaType);
+        imageAdapter = new ImageListAdapter(this, maxSelectNum, selectMode, showCamera, enablePreview, mediaType, limitTime);
         recyclerView.setAdapter(imageAdapter);
 
     }

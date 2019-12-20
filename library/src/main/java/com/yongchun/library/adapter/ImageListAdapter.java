@@ -2,7 +2,10 @@ package com.yongchun.library.adapter;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.media.MediaPlayer;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +19,9 @@ import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.view.ImageSelectorActivity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,6 +36,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private boolean enablePreview = true;
     private int maxSelectNum;
     private int selectMode = ImageSelectorActivity.MODE_MULTIPLE;
+    private float limitTime;
 
     private List<LocalMedia> images = new ArrayList<LocalMedia>();
     private List<LocalMedia> selectImages = new ArrayList<LocalMedia>();
@@ -39,13 +45,14 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private int mediaType; //多媒体类型
 
-    public ImageListAdapter(Context context, int maxSelectNum, int mode, boolean showCamera, boolean enablePreview, int mediaType) {
+    public ImageListAdapter(Context context, int maxSelectNum, int mode, boolean showCamera, boolean enablePreview, int mediaType, float limitTime) {
         this.context = context;
         this.selectMode = mode;
         this.maxSelectNum = maxSelectNum;
         this.showCamera = showCamera;
         this.enablePreview = enablePreview;
         this.mediaType = mediaType;
+        this.limitTime = limitTime;
     }
 
     public void bindImages(List<LocalMedia> images) {
@@ -142,8 +149,16 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private void changeCheckboxState(ViewHolder contentHolder, LocalMedia image) {
         boolean isChecked = contentHolder.check.isSelected();
-        if (selectImages.size() >= maxSelectNum && !isChecked) {
-            Toast.makeText(context, context.getString(R.string.message_max_num, maxSelectNum), Toast.LENGTH_LONG).show();
+        if (!isChecked && mediaType == ImageSelectorActivity.TYPE_VIDEO) { //选中&&视频列表
+            int time = getRingDuring(image.getPath());
+            if (time > limitTime * 1000) { //时间大于限制时间
+                Toast.makeText(context, String.format(context.getString(R.string.video_limit_time), removeDecimalZero(limitTime + "")), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        if (selectImages.size() >= maxSelectNum && !isChecked) { //超出选择条数
+            int msgId = mediaType == ImageSelectorActivity.TYPE_VIDEO ? R.string.message_max_num_video : R.string.message_max_num;
+            Toast.makeText(context, context.getString(msgId, maxSelectNum), Toast.LENGTH_LONG).show();
             return;
         }
         if (isChecked) {
@@ -224,5 +239,48 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setOnImageSelectChangedListener(OnImageSelectChangedListener imageSelectChangedListener) {
         this.imageSelectChangedListener = imageSelectChangedListener;
+    }
+
+    /**
+     * 获取视频播放时长
+     *
+     * @param mUri
+     * @return
+     */
+    public static int getRingDuring(String mUri) {
+        int time = 0;
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(mUri);
+            mediaPlayer.prepare();
+            time = mediaPlayer.getDuration();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+    /**
+     * 去掉结尾为0的小数位
+     *
+     * @param target
+     * @return
+     */
+    public static String removeDecimalZero(String target) {
+        if (TextUtils.isEmpty(target)) {
+            return "0";
+        }
+        if (!target.endsWith(".00") && !target.endsWith(".0")) {
+            //带小数点，且最末数字为0 如：1.40
+            if (target.contains(".") && target.endsWith("0")) {
+                //去掉末尾的0
+                return target.substring(0, target.length() - 1);
+            }
+            return target;
+        }
+        int dotIndex = target.indexOf(".");
+        return target.substring(0, dotIndex);
     }
 }
