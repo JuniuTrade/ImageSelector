@@ -2,6 +2,8 @@
 <resources>
     <string name="all_image">所有图片</string>
     <string name="picture">图片</string>
+    <string name="video">视频</string>
+    <string name="all_video">所有视频</string>
     <string name="take_picture">拍摄照片</string>
     <string name="take_video">录制视频</string>
     <string name="preview">预览</string>

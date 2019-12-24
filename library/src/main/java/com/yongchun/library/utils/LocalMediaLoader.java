@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
+import com.yongchun.library.R;
 import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.model.LocalMediaFolder;
 
@@ -162,7 +163,8 @@ public class LocalMediaLoader {
                 if (allImages != null && !allImages.isEmpty()) {
                     allImageFolder.setFirstImagePath(allImages.get(0).getPath());
                 }
-                allImageFolder.setName(activity.getString(com.yongchun.library.R.string.all_image));
+                String name = activity.getString(type == TYPE_IMAGE ? R.string.all_image : R.string.all_video);
+                allImageFolder.setName(name);
                 imageFolders.add(allImageFolder);
                 sortFolder(imageFolders);
                 imageLoadListener.loadComplete(imageFolders);

@@ -151,7 +151,8 @@ public class ImageSelectorActivity extends AppCompatActivity {
         folderWindow = new FolderWindow(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.picture);
+        //标题文字
+        toolbar.setTitle(TYPE_IMAGE == mediaType ? R.string.picture : R.string.video);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_back);
 
@@ -159,10 +160,13 @@ public class ImageSelectorActivity extends AppCompatActivity {
         doneText.setVisibility(selectMode == MODE_MULTIPLE ? View.VISIBLE : View.GONE);
 
         previewText = (TextView) findViewById(R.id.preview_text);
-        previewText.setVisibility(enablePreview ? View.VISIBLE : View.GONE);
+        //设置为展开且为图片模式
+        previewText.setVisibility(enablePreview &&TYPE_IMAGE==mediaType? View.VISIBLE : View.GONE);
 
         folderLayout = (LinearLayout) findViewById(R.id.folder_layout);
         folderName = (TextView) findViewById(R.id.folder_name);
+        //展开文件夹文案
+        folderName.setText(TYPE_IMAGE == mediaType ? R.string.all_image : R.string.all_video);
 
         recyclerView = (RecyclerView) findViewById(R.id.folder_list);
         recyclerView.setHasFixedSize(true);
