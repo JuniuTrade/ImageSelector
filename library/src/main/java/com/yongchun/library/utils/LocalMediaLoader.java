@@ -2,6 +2,7 @@ package com.yongchun.library.utils;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
@@ -168,7 +169,14 @@ public class LocalMediaLoader {
                 imageFolders.add(allImageFolder);
                 sortFolder(imageFolders);
                 imageLoadListener.loadComplete(imageFolders);
-                if (data != null && type==TYPE_IMAGE) data.close();
+                if (data != null) {
+                    data.moveToFirst();
+                    //4.0以上的版本会自动关闭 (4.0--14;; 4.0.3--15)
+                    if (Integer.parseInt(Build.VERSION.SDK) < 14) {
+                        data.close();
+                    }
+                }
+//                if (data != null && type == TYPE_IMAGE) data.close();
             }
 
             @Override
