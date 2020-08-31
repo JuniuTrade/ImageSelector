@@ -45,6 +45,6 @@ public class ImagePreviewFragment extends Fragment {
                         imageView.setImageBitmap(resource);
                     }
                 });
-        return imageView;
+        return contentView;
     }
 }

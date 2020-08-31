@@ -1,6 +1,7 @@
 package com.yongchun.library.view;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -214,11 +217,12 @@ public class ImagePreviewActivity extends AppCompatActivity {
         }
         isShowBar = !isShowBar;
     }
-    public void onDoneClick(boolean isDone){
+
+    public void onDoneClick(boolean isDone) {
         Intent intent = new Intent();
-        intent.putExtra(OUTPUT_LIST,(ArrayList)selectImages);
-        intent.putExtra(OUTPUT_ISDONE,isDone);
-        setResult(RESULT_OK,intent);
+        intent.putExtra(OUTPUT_LIST, (ArrayList) selectImages);
+        intent.putExtra(OUTPUT_ISDONE, isDone);
+        setResult(RESULT_OK, intent);
         finish();
     }
 }
