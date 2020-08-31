@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -96,7 +97,7 @@ public class CropUtil {
             } catch (SecurityException ignored) {
                 // Nothing we can do
             } finally {
-                if (cursor != null) cursor.close();
+//                if (cursor != null) cursor.close();
             }
         }
         return null;
