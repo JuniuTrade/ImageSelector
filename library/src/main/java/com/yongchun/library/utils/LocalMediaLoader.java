@@ -168,7 +168,7 @@ public class LocalMediaLoader {
                 imageFolders.add(allImageFolder);
                 sortFolder(imageFolders);
                 imageLoadListener.loadComplete(imageFolders);
-                if (data != null) data.close();
+//                if (data != null) data.close();
             }
 
             @Override
