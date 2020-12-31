@@ -75,6 +75,8 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
     private String cameraPath;
 
+    private boolean isLoaded;
+
     /**
      * @param activity
      * @param maxSelectNum  选择个数
@@ -141,8 +143,11 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
             @Override
             public void loadComplete(List<LocalMediaFolder> folders) {
-                folderWindow.bindFolder(folders);
-                imageAdapter.bindImages(folders.get(0).getImages());
+                if (!isLoaded) {
+                    folderWindow.bindFolder(folders);
+                    imageAdapter.bindImages(folders.get(0).getImages());
+                    isLoaded = true;
+                }
             }
         });
     }
